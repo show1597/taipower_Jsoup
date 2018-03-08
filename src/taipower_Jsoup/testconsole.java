@@ -1,11 +1,23 @@
 package taipower_Jsoup;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
+
 import java.text.ParseException;
 
 import org.jsoup.Jsoup;
@@ -16,9 +28,35 @@ import org.jsoup.select.Elements;
 
 public class testconsole {
 
+	
+	
+	final static String[] URL= {"https://www.taipower.com.tw/tc/rssNews.ashx","https://www.taipower.com.tw/tc/rssEvents.ashx","https://www.taipower.com.tw/tc/rssMeasures.ashx"};
+	 
+    public static void enableSSLSocket() throws KeyManagementException, NoSuchAlgorithmException {
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        });
+ 
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new X509TrustManager[]{new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+ 
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+ 
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }}, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+    }
+	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		String[] URL= {"http://www.taipower.com.tw/tc/rssNews.ashx","http://www.taipower.com.tw/tc/rssEvents.ashx","http://www.taipower.com.tw/tc/rssMeasures.ashx"};
+		enableSSLSocket();
 		Parsing_banner();
 		for(int i=0;i< URL.length;i++)
 		{
@@ -27,7 +65,7 @@ public class testconsole {
 	}
 	//parding½m²ß-¹Ï¤ù
 	public static void Parsing_banner() throws Exception{
-		Document doc = Jsoup.connect("http://www.taipower.com.tw/tc/index.aspx").get();
+		Document doc = Jsoup.connect("https://www.taipower.com.tw/tc/index.aspx").get();
 		System.out.print(doc.title());
 		Elements newsHeadlines = doc.select("#pic a,#pic img");
 		for (Element headline : newsHeadlines) {
