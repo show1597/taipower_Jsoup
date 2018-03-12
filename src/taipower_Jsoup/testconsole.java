@@ -54,13 +54,13 @@ public class testconsole {
         HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
     }
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] JsoupURL) throws Exception {
 		// TODO Auto-generated method stub
 		enableSSLSocket();
 		Parsing_banner();
-		for(int i=0;i< URL.length;i++)
+		for(int i=0;i< JsoupURL.length;i++)
 		{
-			Parsing_news(URL[i]);
+			Parsing_news(JsoupURL[i]);
 		}
 	}
 	//parding½m²ß-¹Ï¤ù
