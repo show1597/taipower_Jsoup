@@ -72,9 +72,11 @@ public class testconsole {
 		{
 			Parsing_Update(URL[i],i+1);
 		}*/
-		String ID="117";
+		String ID="10";
+		String date_start="2018/03/12";
+		String date_end="2018/03/15";
 		//Parsing_Delete(ID);
-		Parsing_Select(ID);
+		Parsing_Select(ID,date_start,date_end);
 		
 	}
 	
@@ -87,6 +89,7 @@ public class testconsole {
 			System.out.print(headline.absUrl("src")+" "+headline.absUrl("href")+"\n");
 		}
 	}
+	
 	//Parsing練習-Insert
 	public static void Parsing_Insert(String URL,int count) throws Exception{
 		Document doc = Jsoup.connect(URL).get();
@@ -187,20 +190,48 @@ public class testconsole {
 	}
 	
 	//Parsing練習-Select
-public static void Parsing_Select(String ID) throws Exception{
+public static void Parsing_Select(String ID,String date_start,String date_end) throws Exception{
 		
+	
 		try { 
             String url = "jdbc:sqlserver://114.34.8.237;databaseName=Taipower";
             Connection conn = DriverManager.getConnection(url,"show0308","show0308"); 
             Statement st = conn.createStatement(); 
-
-    		String sql ="SELECT *\n"
+            
+            //用ID搜尋
+    		/*String sql ="SELECT *\n"
     				+ "FROM dbo.NEWS\n"
     				+ "WHERE tcNewsID= "+ ID +";";
     		System.out.println(sql);
-    		st.executeUpdate(sql);
-
+    		ResultSet rs = st.executeQuery(sql);
+    		while(rs.next()) {
+    			System.out.println("Title = " + rs.getString("Title")
+    			+"\nPubtime = " + rs.getString("Pubtime")
+    			+"\nDescription = " + rs.getString("Description")
+    			+"\ntcNewsID = " + rs.getString("tcNewsID"));
+    		}*/
     		
+    		//用日期期間搜尋
+    		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+    		//Date sdate = sdFormat.parse(date_start);
+    		//Date edate = sdFormat.parse(date_end);
+    		
+    		date_start=date_start + " 00:00:00.000";
+    		date_end=date_end + " 23:59:59.997";
+    		
+    		String sqld ="SELECT *\n"
+    				+ "FROM dbo.NEWS\n"
+    				+ "WHERE Pubtime BETWEEN'"+ date_start +"' AND '"+date_end+"';";
+    		System.out.println(sqld);
+    		ResultSet rs = st.executeQuery(sqld);
+    		while(rs.next()) {
+    			System.out.println("Title = " + rs.getString("Title")
+    			+"\nPubtime = " + rs.getString("Pubtime")
+    			+"\nDescription = " + rs.getString("Description")
+    			+"\ntcNewsID = " + rs.getString("tcNewsID"));
+    		}
+    		int f = rs.getFetchSize();
+    		System.out.println(f);
             conn.close(); 
         } catch (Exception e) { 
             System.err.println("Got an exception! "); 
